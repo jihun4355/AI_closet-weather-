@@ -9,7 +9,7 @@
 👉 **전체 PDF 문서 보기**  
 [📄 AI_closet_weather.pdf](./AI_closet_weather.pdf)
 
-:contentReference[oaicite:1]{index=1}
+
 
 ---
 
@@ -50,6 +50,8 @@ YOLOv5 ONNX 모델을 Raspberry Pi에서 실행해 옷을 탐지.
 - 이미지 좌표가 프레임 밖으로 벗어나면 자동 교정(보정 코드 포함)
 
 ### ✔ Detector 출력값
+[obj(x,y,w,h,conf,class), 정사각형 이미지]
+
 
 ---
 
@@ -69,12 +71,14 @@ YOLO로 탐지된 옷을 세부 모델(상의/하의/아우터)로 다시 분류
 
 ### ✔ ID 생성 방식
 PDF p.7 참고:
+YYMMDDhhmmss + 종류코드(1/2/3) + 세부종류 인덱스
+예: 24120713435913
+
 
 
 ---
 
 ## 3️⃣ 모드 1 – 옷장 조회 UI (Tkinter)
-
 
 UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 
@@ -95,9 +99,10 @@ UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 # 💾 데이터 저장 구조
 
 
-
 ### ✔ 저장 위치
 
+datas/clothes_data (CSV)
+datas/imgs/{id}.jpg
 
 
 ### ✔ CSV 저장 형태
@@ -111,7 +116,7 @@ UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 
 # ⚙ 사용 기술 스택
 
-
+출처: PDF p.4~5  :contentReference[oaicite:6]{index=6}  
 
 ### ✔ Software
 - Python  
@@ -134,13 +139,13 @@ UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 # 🧪 AI 모델 학습 과정
 
 
-
 ### ✔ 객체 인식 모델(YOLOv5)
 - 총 401장의 직접 촬영/캡쳐 이미지  
 - 라벨링 후 Data Augmentation → 4,364장  
 - Best Setting:
 
-
+epochs: 150
+batch: 4
 
 - ONNX 변환 후 Raspberry Pi에서 실행
 
@@ -155,6 +160,17 @@ UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 
 ## ✔ Detector 저장 알고리즘 (PDF p.6 설명 기반)
 
+if 객체감지:
+cnt += 1
+if cnt >= 3:
+저장 가능 상태
+기존 이미지와 비교 → bestsize에 더 가까우면 교체
+else:
+cnt -= 1
+if cnt == 0 and 저장 가능:
+버퍼에 최종 객체 추가
+임시 이미지 초기화
+
 
 
 
@@ -167,17 +183,28 @@ UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 
 # 🖥 전체 코드 구조
 
-### 주요 파일  
 
+## ✔ 필터링 알고리즘 (PDF p.8)
+- 계절 / 종류 / 상황 필터는 각각 다른 리스트 기반 매핑  
+- “모두”는 index=0 처리  
+- 세부 종류 문자열이 필터 리스트에 포함되면 결과에 추가  
 
+---
 
+# 🖥 전체 코드 구조
+main.py # 전체 시스템 제어
+camera.py # Picamera2로 이미지 캡처
+detect.py # YOLO ONNX 추론 + crop
+sorter.py # 세부 분류 모델 + ID 생성
+ui.py # Tkinter UI (모드0/1)
+onnx_run.py # ONNX Runtime 기반 분류 모델 실행
 
 
 ---
 
 # 🧩 한계 및 개선 방안
 
-
+출처: PDF p.12  :contentReference[oaicite:9]{index=9}  
 
 ### ✔ 한계
 - Raspberry Pi 성능으로 YOLO 추론이 느려 FPS가 0.7초 수준  
@@ -207,6 +234,9 @@ UI는 모드 0 / 모드 1을 완전히 다른 화면처럼 구성.
 AI Closet Weather 프로젝트는  
 **AI 객체 인식 + 세부 분류 모델 + UI 설계 + 데이터 저장 구조**를 모두 독자적으로 구현한 종합 프로젝트입니다.
 
+GitHub 포트폴리오에서 강력한 AI·IoT 기반 프로젝트로 활용할 수 있습니다.
 
 ---
+
+
 
