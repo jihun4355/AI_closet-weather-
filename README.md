@@ -116,7 +116,6 @@ datas/imgs/{id}.jpg
 
 # ⚙ 사용 기술 스택
 
-출처: PDF p.4~5  :contentReference[oaicite:6]{index=6}  
 
 ### ✔ Software
 - Python  
@@ -203,8 +202,7 @@ onnx_run.py # ONNX Runtime 기반 분류 모델 실행
 ---
 
 # 🧩 한계 및 개선 방안
-
-출처: PDF p.12  :contentReference[oaicite:9]{index=9}  
+ 
 
 ### ✔ 한계
 - Raspberry Pi 성능으로 YOLO 추론이 느려 FPS가 0.7초 수준  
